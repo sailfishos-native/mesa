@@ -1,6 +1,6 @@
-Name:       mesa-llvmpipe
+Name:       mesa-lima
 
-Summary:    Mesa graphics libraries built for LLVMpipe
+Summary:    Mesa graphics libraries built for lima
 Version:    19.1.0-rc2
 Release:    0
 Group:      System/Libraries
@@ -24,13 +24,30 @@ BuildRequires:  python3-mako
 BuildRequires:  libxml2-python
 BuildRequires:  bison
 BuildRequires:  flex
-BuildRequires:  llvm-devel
 BuildRequires:  gettext
 
 %description
 Mesa is an open-source implementation of the OpenGL specification  -
 a system for rendering interactive 3D graphics.
 
+%package libgbm
+Summary:    Generic buffer management API
+Group:      System/Libraries
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+Provides:   libgbm = %{version}-%{release}
+
+%description libgbm
+Generic buffer management API
+
+%package libgbm-devel
+Summary:    Mesa libgbm development package
+Group:      System/Libraries
+Requires:   %{name}-libgbm = %{version}-%{release}
+Provides:   libgbm-devel
+
+%description libgbm-devel
+Mesa libgbm development package.
 
 %package libglapi
 Summary:    Mesa shared gl api library
@@ -74,7 +91,7 @@ Mesa libEGL runtime library.
 %package libglapi-devel
 Summary:    Mesa libglapi development package
 Group:      System/Libraries
-Requires:   mesa-llvmpipe-libglapi = %{version}-%{release}
+Requires:   %{name}-libglapi = %{version}-%{release}
 Provides:   libglapi-devel
 
 %description libglapi-devel
@@ -83,7 +100,7 @@ Mesa libglapi development package.
 %package libGLESv1-devel
 Summary:    Mesa libGLESv1 development package
 Group:      Development/Libraries
-Requires:   mesa-llvmpipe-libGLESv1 = %{version}-%{release}
+Requires:   %{name}-libGLESv1 = %{version}-%{release}
 Provides:   libGLESv1-devel
 
 %description libGLESv1-devel
@@ -92,7 +109,7 @@ Mesa libGLESv1 development packages
 %package libGLESv2-devel
 Summary:    Mesa libGLESv2 development package
 Group:      Development/Libraries
-Requires:   mesa-llvmpipe-libGLESv2 = %{version}-%{release}
+Requires:   %{name}-libGLESv2 = %{version}-%{release}
 Provides:   libGLESv2-devel
 
 %description libGLESv2-devel
@@ -101,7 +118,7 @@ Mesa libGLESv2 development packages
 %package libEGL-devel
 Summary:    Mesa libEGL development package
 Group:      Development/Libraries
-Requires:   mesa-llvmpipe-libEGL = %{version}-%{release}
+Requires:   %{name}-libEGL = %{version}-%{release}
 Provides:   libEGL-devel
 
 %description libEGL-devel
@@ -110,7 +127,7 @@ Mesa libEGL development packages
 %package libGL-devel
 Summary:    Mesa libGL development package
 Group:      Development/Libraries
-Requires:   mesa-llvmpipe-libGL = %{version}-%{release}
+Requires:   %{name}-libGL = %{version}-%{release}
 Provides:   libGL-devel
 
 %description libGL-devel
@@ -123,15 +140,15 @@ Group:      Development/Libraries
 %description dri-drivers-devel
 Mesa-based DRI driver development files.
 
-%package dri-swrast-driver
+%package dri-lima-driver
 Summary:    Mesa-based DRI drivers
 Group:      Graphics/Display and Graphics Adaptation
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
-Provides:   mesa-llvmpipe-dri-drivers = %{version}-%{release}
+Provides:   mesa-lima-dri-drivers = %{version}-%{release}
 
-%description dri-swrast-driver
-Mesa-based swrast DRI driver.
+%description dri-lima-driver
+Mesa-based lima dri driver.
 
 %prep
 %setup -q -n %{name}-%{version}/mesa
@@ -142,12 +159,11 @@ Mesa-based swrast DRI driver.
 %meson -Ddri-drivers= \
     -Dosmesa=none \
     -Ddri3=false \
-    -Dgbm=false \
-    -Dllvm=true \
+    -Dllvm=false \
     -Dshared-llvm=false \
-    -Dgallium-drivers=swrast \
+    -Dgallium-drivers=lima \
     -Dvulkan-drivers= \
-    -Dplatforms=wayland \
+    -Dplatforms=drm,wayland \
     -Dglx=disabled \
     -Degl=true \
     -Dgles1=true \
@@ -160,6 +176,10 @@ Mesa-based swrast DRI driver.
 
 # Remove empty file created by build
 rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
+
+%post libgbm -p /sbin/ldconfig
+
+%postun libgbm -p /sbin/ldconfig
 
 %post libglapi -p /sbin/ldconfig
 
@@ -177,9 +197,9 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 
 %postun libEGL -p /sbin/ldconfig
 
-%post dri-swrast-driver -p /sbin/ldconfig
+%post dri-lima-driver -p /sbin/ldconfig
 
-%postun dri-swrast-driver -p /sbin/ldconfig
+%postun dri-lima-driver -p /sbin/ldconfig
 
 %files libglapi
 %defattr(-,root,root,-)
@@ -250,8 +270,19 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/dri.pc
 
-%files dri-swrast-driver
+%files dri-lima-driver
 %defattr(-,root,root,-)
 %dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
-%{_libdir}/dri/swrast_dri.so
+%{_libdir}/dri/lima_dri.so
+
+%files libgbm
+%defattr(-,root,root,-)
+/usr/lib/libgbm.so.1
+/usr/lib/libgbm.so.1.*
+
+%files libgbm-devel
+%defattr(-,root,root,-)
+/usr/include/gbm.h
+/usr/lib/libgbm.so
+/usr/lib/pkgconfig/gbm.pc
