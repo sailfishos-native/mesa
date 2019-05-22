@@ -161,7 +161,7 @@ Mesa-based lima dri driver.
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
-    -Dgallium-drivers=lima \
+    -Dgallium-drivers=lima,kmsro \
     -Dvulkan-drivers= \
     -Dplatforms=drm,wayland \
     -Dglx=disabled \
@@ -275,14 +275,28 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/dri/lima_dri.so
+%{_libdir}/dri/armada-drm_dri.so
+%{_libdir}/dri/exynos_dri.so
+%{_libdir}/dri/hx8357d_dri.so
+%{_libdir}/dri/ili9225_dri.so
+%{_libdir}/dri/ili9341_dri.so
+%{_libdir}/dri/imx-drm_dri.so
+%{_libdir}/dri/meson_dri.so
+%{_libdir}/dri/mi0283qt_dri.so
+%{_libdir}/dri/pl111_dri.so
+%{_libdir}/dri/repaper_dri.so
+%{_libdir}/dri/rockchip_dri.so
+%{_libdir}/dri/st7586_dri.so
+%{_libdir}/dri/st7735r_dri.so
+%{_libdir}/dri/sun4i-drm_dri.so
 
 %files libgbm
 %defattr(-,root,root,-)
-/usr/lib/libgbm.so.1
-/usr/lib/libgbm.so.1.*
+%{_libdir}/libgbm.so.1
+%{_libdir}/libgbm.so.1.*
 
 %files libgbm-devel
 %defattr(-,root,root,-)
 /usr/include/gbm.h
-/usr/lib/libgbm.so
-/usr/lib/pkgconfig/gbm.pc
+%{_libdir}/libgbm.so
+%{_libdir}/pkgconfig/gbm.pc
