@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    19.1.4
+Version:    19.1.99
 Release:    0
 Group:      System/Libraries
 License:    MIT
@@ -103,6 +103,16 @@ Provides:   libEGL = %{version}-%{release}
 %description libEGL
 Mesa libEGL runtime library.
 
+%package libosmesa
+Summary:    Mesa library fpr offscreen rendering
+Group:      System/Libraries
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+Provides:   libosmesa = %{version}-%{release}
+
+%description libosmesa
+Mesa library fpr offscreen rendering
+
 %package libglapi-devel
 Summary:    Mesa libglapi development package
 Group:      System/Libraries
@@ -148,6 +158,15 @@ Provides:   libGL-devel
 %description libGL-devel
 Mesa libGL development packages
 
+%package libosmesa-devel
+Summary:    Mesa offscreen rendering development package
+Group:      Development/Libraries
+Requires:   %{name}-libosmesa = %{version}-%{release}
+Provides:   libosmesa-devel
+
+%description libosmesa-devel
+Mesa offscreen rendering development package
+
 %package dri-drivers
 Summary:    Mesa-based DRI drivers
 Group:      Graphics/Display and Graphics Adaptation
@@ -172,13 +191,13 @@ Mesa-based DRI driver development files.
 
 %build
 %meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
-    -Dosmesa=none \
+    -Dosmesa=gallium \
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
     -Dgallium-drivers=swrast,nouveau,%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
     -Dvulkan-drivers= \
-    -Dplatforms=drm,wayland \
+    -Dplatforms=drm,wayland,surfaceless \
     -Dglx=disabled \
     -Degl=true \
     -Dgles1=true \
@@ -186,6 +205,7 @@ Mesa-based DRI driver development files.
     -Dgallium-xa=false
 
 %meson_build
+
 
 %install
 %meson_install
@@ -217,6 +237,9 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 
 %postun dri-drivers -p /sbin/ldconfig
 
+%post libosmesa -p /sbin/ldconfig
+
+%postun libosmesa -p /sbin/ldconfig
 
 %files libgbm
 %defattr(-,root,root,-)
@@ -344,4 +367,16 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/st7586_dri.so
 %{_libdir}/dri/st7735r_dri.so
 %{_libdir}/dri/sun4i-drm_dri.so
+%{_libdir}/dri/stm_dri.so
+%{_libdir}/dri/mxsfb-drm_dri.so
 %endif
+
+%files libosmesa
+%defattr(-,root,root,-)
+%{_libdir}/libOSMesa.so
+%{_libdir}/libOSMesa.so.*
+
+%files libosmesa-devel
+%defattr(-,root,root,-)
+%{_libdir}/pkgconfig/osmesa.pc
+%{_includedir}/GL/osmesa.h
