@@ -289,7 +289,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %defattr(-,root,root,-)
 %{_includedir}/GL/gl.h
 %{_includedir}/GL/glcorearb.h
-%{_includedir}/GL/gl_mangle.h
 %{_includedir}/GL/glext.h
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/internal/dri_interface.h
