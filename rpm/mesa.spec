@@ -171,7 +171,7 @@ Mesa-based DRI driver development files.
 %patch1 -p1
 
 %build
-%meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
+CC=/usr/bin/gcc %meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
     -Dosmesa=none \
     -Ddri3=false \
     -Dllvm=false \
@@ -185,7 +185,7 @@ Mesa-based DRI driver development files.
     -Dgles2=true \
     -Dgallium-xa=false
 
-%meson_build
+CC=/usr/bin/gcc %meson_build
 
 %install
 %meson_install
@@ -289,7 +289,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %defattr(-,root,root,-)
 %{_includedir}/GL/gl.h
 %{_includedir}/GL/glcorearb.h
-%{_includedir}/GL/gl_mangle.h
 %{_includedir}/GL/glext.h
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/internal/dri_interface.h
@@ -344,4 +343,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/st7586_dri.so
 %{_libdir}/dri/st7735r_dri.so
 %{_libdir}/dri/sun4i-drm_dri.so
+%{_libdir}/dri/mxsfb-drm_dri.so
+%{_libdir}/dri/stm_dri.so
 %endif
