@@ -168,10 +168,8 @@ Mesa-based DRI driver development files.
 %prep
 %setup -q -n %{name}-%{version}/mesa
 
-%patch1 -p1
-
 %build
-CC=/usr/bin/gcc %meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
+%meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
     -Dosmesa=none \
     -Ddri3=false \
     -Dllvm=false \
@@ -185,7 +183,7 @@ CC=/usr/bin/gcc %meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
     -Dgles2=true \
     -Dgallium-xa=false
 
-CC=/usr/bin/gcc %meson_build
+%meson_build
 
 %install
 %meson_install
