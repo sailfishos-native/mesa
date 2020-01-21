@@ -343,4 +343,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/sun4i-drm_dri.so
 %{_libdir}/dri/mxsfb-drm_dri.so
 %{_libdir}/dri/stm_dri.so
+%{_libdir}/dri/ingenic-drm_dri.so
+%{_libdir}/dri/mcde_dri.so
 %endif
