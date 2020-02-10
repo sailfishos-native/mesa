@@ -174,7 +174,7 @@ Mesa-based DRI driver development files.
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
-    -Dgallium-drivers=swrast,nouveau,%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
+    -Dgallium-drivers=swrast,nouveau,%{?with_intel:,iris},%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
     -Dvulkan-drivers= \
     -Dplatforms=drm,wayland \
     -Dglx=disabled \
@@ -310,6 +310,7 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %if 0%{?with_intel}
 %{_libdir}/dri/i915_dri.so
 %{_libdir}/dri/i965_dri.so
+%{_libdir}/dri/iris_dri.so
 %endif
 %if 0%{?with_vc4}
 %{_libdir}/dri/vc4_dri.so
