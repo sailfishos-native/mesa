@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    19.3.99
+Version:    19.3.3
 Release:    0
 Group:      System/Libraries
 License:    MIT
