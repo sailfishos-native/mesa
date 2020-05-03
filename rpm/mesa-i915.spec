@@ -28,7 +28,6 @@ BuildRequires:  makedepend
 BuildRequires:  pkgconfig(pthread-stubs)
 BuildRequires:  pkgconfig(libdrm) >= 2.4.52
 BuildRequires:  pkgconfig(libxml-2.0)
-BuildRequires:  pkgconfig(talloc)
 BuildRequires:  pkgconfig(libudev) >= 160
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
