@@ -11,7 +11,6 @@ Patch1:     disable-avx-support.diff
 
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libxml-2.0)
-BuildRequires:  pkgconfig(talloc)
 BuildRequires:  pkgconfig(libudev) >= 160
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-egl)
