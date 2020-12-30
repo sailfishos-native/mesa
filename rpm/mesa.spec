@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    20.2.1
+Version:    20.3.1
 Release:    0
 Group:      System/Libraries
 License:    MIT
@@ -175,7 +175,7 @@ Mesa-based DRI driver development files.
     -Dshared-llvm=false \
     -Dgallium-drivers=swrast,nouveau%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
     -Dvulkan-drivers= \
-    -Dplatforms=drm,wayland \
+    -Dplatforms=wayland \
     -Dglx=disabled \
     -Degl=true \
     -Dgles1=true \
@@ -303,6 +303,8 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/nouveau_dri.so
 %ifarch %{arm} aarch64
 %{_libdir}/dri/imx-drm_dri.so
+%{_libdir}/dri/imx-dcss_dri.so
+%{_libdir}/dri/mediatek_dri.so
 %endif
 %if 0%{?with_lima}
 %{_libdir}/dri/lima_dri.so
