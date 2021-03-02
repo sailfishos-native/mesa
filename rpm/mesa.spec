@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    20.3.1
+Version:    21.0.0-rc5
 Release:    0
 Group:      System/Libraries
 License:    MIT
@@ -25,20 +25,20 @@ Source0:    %{name}-%{version}.tar.bz2
 Patch1:     disable-avx-support.diff
 
 BuildRequires:  pkgconfig(libdrm)
-BuildRequires:  pkgconfig(libxml-2.0)
-BuildRequires:  pkgconfig(libudev) >= 160
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-egl)
 BuildRequires:  pkgconfig(wayland-protocols)
 BuildRequires:  pkgconfig(wayland-server)
+BuildRequires:  pkgconfig(zlib) >= 1.2.3
 BuildRequires:  pkgconfig meson
 BuildRequires:  expat-devel >= 2.0
 BuildRequires:  python3-devel
 BuildRequires:  python3-mako
-BuildRequires:  libxml2-python
 BuildRequires:  bison
 BuildRequires:  flex
 BuildRequires:  gettext
+BuildRequires:  cmake
+BuildRequires:  clang-devel
 
 %description
 Mesa is an open-source implementation of the OpenGL specification  -
@@ -168,8 +168,8 @@ Mesa-based DRI driver development files.
 %setup -q -n %{name}-%{version}/mesa
 
 %build
-%meson   -Ddri-drivers=%{?with_intel:,i915,i965} \
-    -Dosmesa=none \
+%meson   -Ddri-drivers=%{?with_intel:i915,i965} \
+    -Dosmesa=false \
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
@@ -178,10 +178,11 @@ Mesa-based DRI driver development files.
     -Dplatforms=wayland \
     -Dglx=disabled \
     -Degl=true \
-    -Dgles1=true \
-    -Dgles2=true \
+    -Dgles1=enabled \
+    -Dgles2=enabled \
     -Dgallium-xa=false \
-    -Dprefer-iris=false
+    -Dprefer-iris=false \
+    -Dmicrosoft-clc=disabled
 
 %meson_build
 
