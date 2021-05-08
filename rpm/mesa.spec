@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    21.0.0-rc5
+Version:    21.1.0
 Release:    0
 Group:      System/Libraries
 License:    MIT
