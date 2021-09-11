@@ -313,6 +313,7 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %if 0%{?with_intel}
 %{_libdir}/dri/i915_dri.so
 %{_libdir}/dri/i965_dri.so
+%{_libdir}/dri/i830_dri.so
 %endif
 %if 0%{?with_vc4}
 %{_libdir}/dri/vc4_dri.so
@@ -348,4 +349,5 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/stm_dri.so
 %{_libdir}/dri/ingenic-drm_dri.so
 %{_libdir}/dri/mcde_dri.so
+%{_libdir}/dri/mali-dp_dri.so
 %endif
