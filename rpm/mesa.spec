@@ -173,7 +173,7 @@ Mesa-based DRI driver development files.
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
-    -Dgallium-drivers=swrast,nouveau%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
+    -Dgallium-drivers=swrast,nouveau,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost} \
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
@@ -302,6 +302,7 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/dri/swrast_dri.so
 %{_libdir}/dri/nouveau_dri.so
+%{_libdir}/dri/virtio_gpu_dri.so
 %ifarch %{arm} aarch64
 %{_libdir}/dri/imx-drm_dri.so
 %{_libdir}/dri/imx-dcss_dri.so
