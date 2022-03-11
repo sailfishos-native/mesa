@@ -306,6 +306,8 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/imx-drm_dri.so
 %{_libdir}/dri/imx-dcss_dri.so
 %{_libdir}/dri/mediatek_dri.so
+%{_libdir}/dri/komeda_dri.so
+%{_libdir}/dri/rcar-du_dri.so
 %endif
 %if 0%{?with_lima}
 %{_libdir}/dri/lima_dri.so
