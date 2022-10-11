@@ -168,7 +168,7 @@ Mesa-based DRI driver development files.
 %setup -q -n %{name}-%{version}/mesa
 
 %build
-%meson -Ddri-drivers=%{?with_intel:i915,i965} \
+%meson  -Ddri-drivers=%{?with_intel:i915,i965} \
     -Dosmesa=false \
     -Ddri3=false \
     -Dllvm=false \
