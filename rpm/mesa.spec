@@ -16,7 +16,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    22.0.0
+Version:    21.3.9
 Release:    0
 Group:      System/Libraries
 License:    MIT
@@ -168,11 +168,12 @@ Mesa-based DRI driver development files.
 %setup -q -n %{name}-%{version}/mesa
 
 %build
-%meson -Dosmesa=false \
+%meson -Ddri-drivers=%{?with_intel:i915,i965} \
+    -Dosmesa=false \
     -Ddri3=false \
     -Dllvm=false \
     -Dshared-llvm=false \
-    -Dgallium-drivers=swrast,nouveau,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915}\
+    -Dgallium-drivers=swrast,nouveau,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
@@ -306,14 +307,14 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/imx-drm_dri.so
 %{_libdir}/dri/imx-dcss_dri.so
 %{_libdir}/dri/mediatek_dri.so
-%{_libdir}/dri/komeda_dri.so
-%{_libdir}/dri/rcar-du_dri.so
 %endif
 %if 0%{?with_lima}
 %{_libdir}/dri/lima_dri.so
 %endif
 %if 0%{?with_intel}
 %{_libdir}/dri/i915_dri.so
+%{_libdir}/dri/i965_dri.so
+%{_libdir}/dri/i830_dri.so
 %endif
 %if 0%{?with_vc4}
 %{_libdir}/dri/vc4_dri.so
