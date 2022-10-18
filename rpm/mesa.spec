@@ -351,4 +351,5 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/mcde_dri.so
 %{_libdir}/dri/mali-dp_dri.so
 %{_libdir}/dri/kirin_dri.so
+%{_libdir}/dri/imx-lcdif_dri.so
 %endif
