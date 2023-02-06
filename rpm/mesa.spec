@@ -276,7 +276,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %dir %{_includedir}/EGL
 %{_includedir}/EGL/egl.h
 %{_includedir}/EGL/eglext.h
-%{_includedir}/EGL/eglextchromium.h
 %{_includedir}/EGL/eglplatform.h
 %{_includedir}/EGL/eglmesaext.h
 %dir %{_includedir}/KHR
