@@ -277,6 +277,7 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_includedir}/EGL/egl.h
 %{_includedir}/EGL/eglext.h
 %{_includedir}/EGL/eglplatform.h
+%{_includedir}/EGL/eglext_angle.h
 %{_includedir}/EGL/eglmesaext.h
 %dir %{_includedir}/KHR
 %{_includedir}/KHR/khrplatform.h
