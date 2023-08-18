@@ -30,6 +30,7 @@ BuildRequires:  pkgconfig(wayland-egl)
 BuildRequires:  pkgconfig(wayland-protocols)
 BuildRequires:  pkgconfig(wayland-server)
 BuildRequires:  pkgconfig(zlib) >= 1.2.3
+BuildRequires:  libva-devel
 BuildRequires:  pkgconfig meson
 BuildRequires:  expat-devel >= 2.0
 BuildRequires:  python3-devel
@@ -39,6 +40,8 @@ BuildRequires:  flex
 BuildRequires:  gettext
 BuildRequires:  cmake
 BuildRequires:  clang-devel
+
+Requires:       libva
 
 %description
 Mesa is an open-source implementation of the OpenGL specification  -
