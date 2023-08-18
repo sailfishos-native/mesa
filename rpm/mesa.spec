@@ -180,7 +180,8 @@ Mesa-based DRI driver development files.
     -Dgles1=enabled \
     -Dgles2=enabled \
     -Dgallium-xa=false \
-    -Dmicrosoft-clc=disabled
+    -Dmicrosoft-clc=disabled \
+    -Dxlib-lease=disabled
 
 %meson_build
 
