@@ -190,7 +190,9 @@ Mesa-based DRI driver development files.
     -Dgallium-vdpau=disabled \
     -Dandroid-libbacktrace=disabled \
     -Dvalgrind=disabled \
-    -Dlibunwind=disabled
+    -Dlibunwind=disabled \
+    -Dlmsensors=disabled \
+    -Dselinux=false
 
 %meson_build
 
