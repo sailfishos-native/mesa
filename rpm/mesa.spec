@@ -312,7 +312,9 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/dri/swrast_dri.so
 %{_libdir}/dri/nouveau_dri.so
+%{_libdir}/dri/nouveau_drv_video.so
 %{_libdir}/dri/virtio_gpu_dri.so
+%{_libdir}/dri/virtio_gpu_drv_video.so
 %ifarch %{arm} aarch64
 %{_libdir}/dri/imx-drm_dri.so
 %{_libdir}/dri/imx-dcss_dri.so
