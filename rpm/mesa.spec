@@ -174,21 +174,22 @@ Mesa-based DRI driver development files.
 
 %build
 %meson -Dosmesa=false \
-    -Ddri3=false \
-    -Dllvm=false \
-    -Dshared-llvm=false \
+    -Ddri3=enabled \
+    -Dllvm=disabled \
+    -Dshared-llvm=disabled \
     -Dgallium-drivers=swrast,nouveau,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
-    -Degl=true \
+    -Degl=enabled \
     -Dgles1=enabled \
     -Dgles2=enabled \
-    -Dgallium-xa=false \
+    -Dgallium-xa=disabled \
     -Dmicrosoft-clc=disabled \
     -Dxlib-lease=disabled \
     -Dgallium-vdpau=disabled \
-    -Dandroid-libbacktrace=disabled
+    -Dandroid-libbacktrace=disabled \
+    -Dvalgrind=disabled
 
 %meson_build
 
