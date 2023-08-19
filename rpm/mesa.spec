@@ -185,7 +185,8 @@ Mesa-based DRI driver development files.
     -Dgallium-xa=false \
     -Dmicrosoft-clc=disabled \
     -Dxlib-lease=disabled \
-    -Dgallium-vdpau=disabled
+    -Dgallium-vdpau=disabled \
+    -Dandroid-libbacktrace=disabled
 
 %meson_build
 
