@@ -4,7 +4,7 @@
 %endif
 
 %ifarch %{arm} aarch64
-%global with_freedreno 1
+%global with_freedreno 0
 %global with_kmsro     1
 %global with_lima      1
 %global with_panfrost  1
