@@ -8,7 +8,7 @@
 %global with_kmsro     1
 %global with_lima      1
 %global with_panfrost  1
-%global with_tegra     0
+#global with_tegra     0
 %global with_vc4       1
 %endif
 
