@@ -177,7 +177,7 @@ Mesa-based DRI driver development files.
     -Ddri3=enabled \
     -Dllvm=disabled \
     -Dshared-llvm=disabled \
-    -Dgallium-drivers=swrast,nouveau,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915}\
+    -Dgallium-drivers=swrast,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
@@ -311,8 +311,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/dri/swrast_dri.so
-%{_libdir}/dri/nouveau_dri.so
-%{_libdir}/dri/nouveau_drv_video.so
 %{_libdir}/dri/virtio_gpu_dri.so
 %{_libdir}/dri/virtio_gpu_drv_video.so
 %ifarch %{arm} aarch64
