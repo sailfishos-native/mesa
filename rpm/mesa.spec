@@ -366,4 +366,10 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/kirin_dri.so
 %{_libdir}/dri/imx-lcdif_dri.so
 %{_libdir}/dri/hdlcd_dri.so
+%{_libdir}/dri/gm12u320_dri.so
+%{_libdir}/dri/ili9163_dri.so
+%{_libdir}/dri/ili9486_dri.so
+%{_libdir}/dri/panel-mipi-dbi_dri.so
+%{_libdir}/dri/sti_dri.so
+%{_libdir}/dri/udl_dri.so
 %endif
