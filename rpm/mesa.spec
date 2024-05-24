@@ -374,4 +374,8 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/panel-mipi-dbi_dri.so
 %{_libdir}/dri/sti_dri.so
 %{_libdir}/dri/udl_dri.so
+%{_libdir}/dri/panthor_dri.so
+%{_libdir}/dri/rzg2l-du_dri.so
+%{_libdir}/dri/ssd130x_dri.so
+%{_libdir}/dri/zynqmp-dpsub_dri.so
 %endif
