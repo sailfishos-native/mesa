@@ -192,7 +192,8 @@ Mesa-based DRI driver development files.
     -Dvalgrind=disabled \
     -Dlibunwind=disabled \
     -Dlmsensors=disabled \
-    -Dselinux=false
+    -Dselinux=false \
+    -Dintel-rt=false
 
 %meson_build
 
