@@ -193,6 +193,7 @@ Mesa-based DRI driver development files.
     -Dlibunwind=disabled \
     -Dlmsensors=disabled \
     -Dselinux=false \
+    -Dintel-clc=enabled \
     -Dintel-rt=false \
     -Dglvnd=false
 
