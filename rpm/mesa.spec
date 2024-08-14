@@ -33,6 +33,7 @@ BuildRequires:  pkgconfig meson
 BuildRequires:  expat-devel >= 2.0
 BuildRequires:  python3-devel
 BuildRequires:  python3-mako
+BuildRequires:  python3-yaml
 BuildRequires:  bison
 BuildRequires:  flex
 BuildRequires:  gettext
