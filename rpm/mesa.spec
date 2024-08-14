@@ -5,7 +5,6 @@
 
 %ifarch %{arm} aarch64
 #global with_freedreno 1
-%global with_kmsro     1
 %global with_lima      1
 %global with_panfrost  1
 #global with_tegra     0
@@ -177,7 +176,7 @@ Mesa-based DRI driver development files.
     -Ddri3=enabled \
     -Dllvm=disabled \
     -Dshared-llvm=disabled \
-    -Dgallium-drivers=swrast,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_kmsro:,kmsro}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
+    -Dgallium-drivers=swrast,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
@@ -346,7 +345,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %if 0%{?with_panfrost}
 %{_libdir}/dri/panfrost_dri.so
 %endif
-%if 0%{?with_kmsro}
 %{_libdir}/dri/armada-drm_dri.so
 %{_libdir}/dri/exynos_dri.so
 %{_libdir}/dri/hx8357d_dri.so
@@ -378,4 +376,3 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %{_libdir}/dri/rzg2l-du_dri.so
 %{_libdir}/dri/ssd130x_dri.so
 %{_libdir}/dri/zynqmp-dpsub_dri.so
-%endif
