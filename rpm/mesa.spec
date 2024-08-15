@@ -41,6 +41,7 @@ BuildRequires:  cmake
 BuildRequires:  clang-devel
 BuildRequires:  libva-devel
 BuildRequires:  libzstd-devel
+BuildRequires:  llvm-devel
 
 Requires:       libva
 Requires:       libzstd
@@ -175,9 +176,9 @@ Mesa-based DRI driver development files.
 %build
 %meson -Dosmesa=false \
     -Ddri3=enabled \
-    -Dllvm=disabled \
+    -Dllvm=enabled \
     -Dshared-llvm=disabled \
-    -Dgallium-drivers=softpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
+    -Dgallium-drivers=softpipe,llvmpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
@@ -194,7 +195,8 @@ Mesa-based DRI driver development files.
     -Dlmsensors=disabled \
     -Dselinux=false \
     -Dintel-rt=false \
-    -Dglvnd=false
+    -Dglvnd=false \
+    -Dcpp_rtti=false
 
 %meson_build
 
