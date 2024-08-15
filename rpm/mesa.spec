@@ -177,7 +177,7 @@ Mesa-based DRI driver development files.
     -Ddri3=enabled \
     -Dllvm=disabled \
     -Dshared-llvm=disabled \
-    -Dgallium-drivers=swrast,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
+    -Dgallium-drivers=softpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
     -Dglx=disabled \
