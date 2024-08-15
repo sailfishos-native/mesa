@@ -42,6 +42,8 @@ BuildRequires:  clang-devel
 BuildRequires:  libva-devel
 BuildRequires:  libzstd-devel
 BuildRequires:  llvm-devel
+BuildRequires:  ccache
+BuildRequires:  kernel-headers
 
 Requires:       libva
 Requires:       libzstd
@@ -314,68 +316,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %defattr(-,root,root,-)
 %dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
-%{_libdir}/dri/swrast_dri.so
-%{_libdir}/dri/virtio_gpu_dri.so
 %{_libdir}/dri/virtio_gpu_drv_video.so
-%ifarch %{arm} aarch64
-%{_libdir}/dri/imx-drm_dri.so
-%{_libdir}/dri/imx-dcss_dri.so
-%{_libdir}/dri/mediatek_dri.so
-%{_libdir}/dri/komeda_dri.so
-%{_libdir}/dri/rcar-du_dri.so
-%endif
-%if 0%{?with_lima}
-%{_libdir}/dri/lima_dri.so
-%endif
-%if 0%{?with_intel}
-%{_libdir}/dri/i915_dri.so
-%{_libdir}/dri/crocus_dri.so
-%{_libdir}/dri/iris_dri.so
-%endif
-%if 0%{?with_vc4}
-%{_libdir}/dri/vc4_dri.so
-%endif
-%if 0%{?with_freedreno}
-%{_libdir}/dri/kgsl_dri.so
-%{_libdir}/dri/msm_dri.so
-%endif
-%if 0%{?with_etnaviv}
-%{_libdir}/dri/etnaviv_dri.so
-%endif
-%if 0%{?with_tegra}
-%{_libdir}/dri/tegra_dri.so
-%endif
-%if 0%{?with_panfrost}
-%{_libdir}/dri/panfrost_dri.so
-%endif
-%{_libdir}/dri/armada-drm_dri.so
-%{_libdir}/dri/exynos_dri.so
-%{_libdir}/dri/hx8357d_dri.so
-%{_libdir}/dri/ili9225_dri.so
-%{_libdir}/dri/ili9341_dri.so
-%{_libdir}/dri/meson_dri.so
-%{_libdir}/dri/mi0283qt_dri.so
-%{_libdir}/dri/pl111_dri.so
-%{_libdir}/dri/repaper_dri.so
-%{_libdir}/dri/rockchip_dri.so
-%{_libdir}/dri/st7586_dri.so
-%{_libdir}/dri/st7735r_dri.so
-%{_libdir}/dri/sun4i-drm_dri.so
-%{_libdir}/dri/mxsfb-drm_dri.so
-%{_libdir}/dri/stm_dri.so
-%{_libdir}/dri/ingenic-drm_dri.so
-%{_libdir}/dri/mcde_dri.so
-%{_libdir}/dri/mali-dp_dri.so
-%{_libdir}/dri/kirin_dri.so
-%{_libdir}/dri/imx-lcdif_dri.so
-%{_libdir}/dri/hdlcd_dri.so
-%{_libdir}/dri/gm12u320_dri.so
-%{_libdir}/dri/ili9163_dri.so
-%{_libdir}/dri/ili9486_dri.so
-%{_libdir}/dri/panel-mipi-dbi_dri.so
-%{_libdir}/dri/sti_dri.so
-%{_libdir}/dri/udl_dri.so
-%{_libdir}/dri/panthor_dri.so
-%{_libdir}/dri/rzg2l-du_dri.so
-%{_libdir}/dri/ssd130x_dri.so
-%{_libdir}/dri/zynqmp-dpsub_dri.so
+%{_libdir}/dri/libgallium_drv_video.so
+%{_libdir}/libgallium-*.so
