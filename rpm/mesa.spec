@@ -15,7 +15,7 @@
 Name:       mesa
 
 Summary:    Mesa graphics libraries
-Version:    24.2.0
+Version:    24.3.1
 Release:    0
 Group:      System/Libraries
 License:    MIT
