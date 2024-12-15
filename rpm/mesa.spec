@@ -316,5 +316,4 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/dri/virtio_gpu_drv_video.so
-%{_libdir}/dri/libgallium_drv_video.so
 %{_libdir}/libgallium-*.so
