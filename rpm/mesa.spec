@@ -196,7 +196,8 @@ Mesa-based DRI driver development files.
     -Dlmsensors=disabled \
     -Dintel-rt=disabled \
     -Dglvnd=disabled \
-    -Dcpp_rtti=false
+    -Dcpp_rtti=false \
+    -Dgallium-opencl=disabled
 
 %meson_build
 
