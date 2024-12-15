@@ -177,7 +177,6 @@ Mesa-based DRI driver development files.
 
 %build
 %meson -Dosmesa=false \
-    -Ddri3=enabled \
     -Dllvm=enabled \
     -Dshared-llvm=disabled \
     -Dgallium-drivers=softpipe,llvmpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
