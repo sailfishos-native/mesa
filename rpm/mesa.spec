@@ -236,6 +236,7 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %defattr(-,root,root,-)
 %{_libdir}/libgbm.so.1
 %{_libdir}/libgbm.so.1.*
+%{_libdir}/gbm/dri_gbm.so
 
 %files libgbm-devel
 %defattr(-,root,root,-)
