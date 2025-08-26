@@ -176,8 +176,7 @@ Mesa-based DRI driver development files.
 %setup -q -n %{name}-%{version}/mesa
 
 %build
-%meson -Dosmesa=false \
-    -Dllvm=enabled \
+%meson -Dllvm=enabled \
     -Dshared-llvm=disabled \
     -Dgallium-drivers=softpipe,llvmpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
     -Dvulkan-drivers= \
@@ -186,7 +185,6 @@ Mesa-based DRI driver development files.
     -Degl=enabled \
     -Dgles1=enabled \
     -Dgles2=enabled \
-    -Dgallium-xa=disabled \
     -Dmicrosoft-clc=disabled \
     -Dxlib-lease=disabled \
     -Dgallium-vdpau=disabled \
@@ -196,9 +194,7 @@ Mesa-based DRI driver development files.
     -Dlmsensors=disabled \
     -Dintel-rt=disabled \
     -Dglvnd=disabled \
-    -Dcpp_rtti=false \
-    -Dgallium-opencl=disabled
-
+    -Dcpp_rtti=false
 %meson_build
 
 %install
