@@ -45,6 +45,7 @@ BuildRequires:  llvm-devel
 BuildRequires:  ccache
 BuildRequires:  kernel-headers
 BuildRequires:  pkgconfig(libclc) >= 0.2.0
+BuildRequires:  pkgconfig(LLVMSPIRVLib) >= 15.0.0
 
 Requires:       libva
 Requires:       libzstd
