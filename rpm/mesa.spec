@@ -44,6 +44,7 @@ BuildRequires:  libzstd-devel
 BuildRequires:  llvm-devel
 BuildRequires:  ccache
 BuildRequires:  kernel-headers
+BuildRequires:  pkgconfig(libclc) >= 0.2.0
 
 Requires:       libva
 Requires:       libzstd
