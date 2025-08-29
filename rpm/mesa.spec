@@ -159,7 +159,7 @@ Group:      Development/Libraries
 Mesa-based DRI driver development files.
 
 %prep
-%autosetup -n %{name}-%{version}/mesa
+%autosetup -p1 -n %{name}-%{version}/mesa
 
 %build
 %meson -Dllvm=enabled \
