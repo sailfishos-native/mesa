@@ -21,6 +21,7 @@ Group:      System/Libraries
 License:    MIT
 URL:        http://www.mesa3d.org/
 Source0:    %{name}-%{version}.tar.bz2
+Patch0:     support-python38.patch
 Patch1:     disable-avx-support.diff
 
 BuildRequires:  pkgconfig(libdrm)
@@ -46,6 +47,7 @@ BuildRequires:  ccache
 BuildRequires:  kernel-headers
 BuildRequires:  pkgconfig(libclc) >= 0.2.0
 BuildRequires:  pkgconfig(LLVMSPIRVLib) >= 15.0.0
+BuildRequires:  spirv-tools-devel
 
 Requires:       libva
 Requires:       libzstd
@@ -72,15 +74,6 @@ Provides:   libgbm-devel
 
 %description libgbm-devel
 Mesa libgbm development package.
-
-%package libglapi
-Summary:    Mesa shared gl api library
-Group:      System/Libraries
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
-
-%description libglapi
-Mesa shared gl api library.
 
 %package libGLESv1
 Summary:    Mesa libGLESv1 runtime libraries
@@ -111,15 +104,6 @@ Provides:   libEGL = %{version}-%{release}
 
 %description libEGL
 Mesa libEGL runtime library.
-
-%package libglapi-devel
-Summary:    Mesa libglapi development package
-Group:      System/Libraries
-Requires:   %{name}-libglapi = %{version}-%{release}
-Provides:   libglapi-devel
-
-%description libglapi-devel
-Mesa libglapi development package.
 
 %package libGLESv1-devel
 Summary:    Mesa libGLESv1 development package
@@ -175,11 +159,12 @@ Group:      Development/Libraries
 Mesa-based DRI driver development files.
 
 %prep
-%setup -q -n %{name}-%{version}/mesa
+%autosetup -q %{name}-%{version}/mesa
 
 %build
 %meson -Dllvm=enabled \
-    -Dshared-llvm=disabled \
+    -Dllvm=enabled \
+    -Dshared-llvm=enabled \
     -Dgallium-drivers=softpipe,llvmpipe,virgl%{?with_freedreno:,freedreno}%{?with_etnaviv:,etnaviv}%{?with_tegra:,tegra}%{?with_vc4:,vc4}%{?with_lima:,lima}%{?with_panfrost:,panfrost}%{?with_intel:,i915,crocus,iris}\
     -Dvulkan-drivers= \
     -Dplatforms=wayland \
@@ -210,10 +195,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 
 %postun libgbm -p /sbin/ldconfig
 
-%post libglapi -p /sbin/ldconfig
-
-%postun libglapi -p /sbin/ldconfig
-
 %post libGLESv1 -p /sbin/ldconfig
 
 %postun libGLESv1 -p /sbin/ldconfig
@@ -239,14 +220,10 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 
 %files libgbm-devel
 %defattr(-,root,root,-)
-/usr/include/gbm.h
+%{_includedir}/gbm.h
+%{_includedir}/gbm_backend_abi.h
 %{_libdir}/libgbm.so
 %{_libdir}/pkgconfig/gbm.pc
-
-%files libglapi
-%defattr(-,root,root,-)
-%{_libdir}/libglapi.so.0
-%{_libdir}/libglapi.so.0.*
 
 %files libGLESv1
 %defattr(-,root,root,-)
@@ -259,10 +236,6 @@ rm -rf %{buildroot}/%{_libdir}/dri/kms_swrast_dri.so
 %files libEGL
 %defattr(-,root,root,-)
 %{_libdir}/libEGL.so.*
-
-%files libglapi-devel
-%defattr(-,root,root,-)
-%{_libdir}/libglapi.so
 
 %files libGLESv1-devel
 %defattr(-,root,root,-)

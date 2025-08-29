@@ -1,0 +1,13 @@
+diff --git a/src/compiler/nir/nir_algebraic.py b/src/compiler/nir/nir_algebraic.py
+index 4745e50b426..417c885b3a2 100644
+--- a/src/compiler/nir/nir_algebraic.py
++++ b/src/compiler/nir/nir_algebraic.py
+@@ -395,7 +395,7 @@ class Expression(Value):
+       self.nnan = cond.pop('nnan', False)
+       self.ninf = cond.pop('ninf', False)
+       self.contract = cond.pop('contract', False)
+-      self.swizzle = -1 if m.group('swizzle') is None else swizzles[m.group('swizzle').removeprefix('.')]
++      self.swizzle = -1 if m.group('swizzle') is None else swizzles[m.group('swizzle')[m.group('swizzle').startswith(".") and len("."):]]
+ 
+       assert len(cond) <= 1
+       self.cond = cond.popitem()[0] if cond else None
