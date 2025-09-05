@@ -21,7 +21,7 @@ Group:      System/Libraries
 License:    MIT
 URL:        http://www.mesa3d.org/
 Source0:    %{name}-%{version}.tar.bz2
-Patch0:     support-python38.patch
+#Patch0:     support-python38.patch
 #Patch1:     disable-avx-support.diff
 
 BuildRequires:  pkgconfig(libdrm)
