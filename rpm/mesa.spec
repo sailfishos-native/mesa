@@ -23,6 +23,7 @@ URL:        http://www.mesa3d.org/
 Source0:    %{name}-%{version}.tar.bz2
 #Patch0:     support-python38.patch
 #Patch1:     disable-avx-support.diff
+Parch0:     0001-freedreno-Check-for-flushed-batches.patch
 
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(wayland-client)
