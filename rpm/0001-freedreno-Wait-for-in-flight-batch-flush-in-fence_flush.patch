@@ -1,0 +1,67 @@
+From b83579ca8f4e6249e31e1cac78f10f79ef25cb95 Mon Sep 17 00:00:00 2001
+From: "m.szczepaniak.000" <m.szczepaniak.000@gmail.com>
+Date: Fri, 13 Nov 2026 22:33:21 +0000
+Subject: [PATCH] freedreno: Wait for in-flight batch flush in fence_flush()
+
+batch_flush() sets batch->flushed before the submit fence is attached
+in flush_ring(). A waiter on another thread (cross-context GL sync, as
+used by Gecko's Renderer/Compositor threads) calling fence_flush() in
+that window gets an early return from fd_batch_flush(), marks the fence
+flushed with fence->fence still NULL, and fd_pipe_wait_timeout()
+dereferences NULL.
+
+Reset the batch fence's ready fence when the flush starts, so the
+existing signal in fd_pipe_fence_set_batch(fence, NULL) (called from
+fd_pipe_fence_set_submit_fence()) releases waiters, and wait on it in
+fence_flush() after fd_batch_flush().
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/gallium/drivers/freedreno/freedreno_batch.c |  6 ++++++
+ src/gallium/drivers/freedreno/freedreno_fence.c | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/src/gallium/drivers/freedreno/freedreno_batch.c b/src/gallium/drivers/freedreno/freedreno_batch.c
+index 7033aa7..3875242 100644
+--- a/src/gallium/drivers/freedreno/freedreno_batch.c
++++ b/src/gallium/drivers/freedreno/freedreno_batch.c
+@@ -362,6 +362,12 @@ batch_flush(struct fd_batch *batch) assert_dt
+     * that causes all sorts of hilarity.
+     */
+    fd_bc_invalidate_batch(batch, false);
++
++   if (batch->fence && !batch->fence->syncobj && !batch->fence->needs_signal) {
++      util_queue_fence_reset(&batch->fence->ready);
++      batch->fence->needs_signal = true;
++   }
++
+    batch->flushed = true;
+ 
+    if (batch == batch->ctx->batch)
+diff --git a/src/gallium/drivers/freedreno/freedreno_fence.c b/src/gallium/drivers/freedreno/freedreno_fence.c
+index 4bd1924..5626603 100644
+--- a/src/gallium/drivers/freedreno/freedreno_fence.c
++++ b/src/gallium/drivers/freedreno/freedreno_fence.c
+@@ -67,6 +67,19 @@ fence_flush(struct pipe_context *pctx, struct pipe_fence_handle *fence,
+    if (fence->batch)
+       fd_batch_flush(fence->batch);
+ 
++   if (!util_queue_fence_is_signalled(&fence->ready)) {
++      if (!timeout)
++         return false;
++
++      if (timeout == OS_TIMEOUT_INFINITE) {
++         util_queue_fence_wait(&fence->ready);
++      } else {
++         int64_t abs_timeout = os_time_get_absolute_timeout(timeout);
++         if (!util_queue_fence_wait_timeout(&fence->ready, abs_timeout))
++            return false;
++      }
++   }
++
+ out:
+    if (fence->fence)
+       fd_fence_flush(fence->fence);
+-- 
+2.56.0
+
