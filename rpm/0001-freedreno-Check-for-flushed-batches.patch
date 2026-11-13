@@ -1,0 +1,176 @@
+From 2b73575412eac96434509a4e80ab849c6026c4c3 Mon Sep 17 00:00:00 2001
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Mon, 9 Nov 2026 18:22:44 +0000
+Subject: [PATCH] freedreno: Check for flushed batches
+
+Ignore batches from other contexts (we provide no-cross-context
+guarantees) and already flushed zombie batches that haven't yet
+been removed from the batch cache table.
+
+Signed-off-by: Rob Clark <rob.clark@oss.qualcomm.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/40352>
+(cherry picked from commit b587181f917fe75a8c35b9d234168538d8533c30,
+ rebased onto mesa-25.1.8 without 05e19b36)
+---
+ .../drivers/freedreno/freedreno_batch.c       |  2 +-
+ .../drivers/freedreno/freedreno_batch.h       | 13 ++++++
+ .../drivers/freedreno/freedreno_batch_cache.c | 42 ++++++++++++-------
+ 3 files changed, 40 insertions(+), 17 deletions(-)
+
+diff --git a/src/gallium/drivers/freedreno/freedreno_batch.c b/src/gallium/drivers/freedreno/freedreno_batch.c
+index bc2a109..7033aa7 100644
+--- a/src/gallium/drivers/freedreno/freedreno_batch.c
++++ b/src/gallium/drivers/freedreno/freedreno_batch.c
+@@ -541,7 +541,7 @@ fd_batch_resource_write(struct fd_batch *batch, struct fd_resource *rsc)
+ 
+       foreach_batch (dep, cache, track->batch_mask) {
+          struct fd_batch *b = NULL;
+-         if ((dep == batch) || (dep->ctx != batch->ctx))
++         if ((dep == batch) || !check_batch(dep, batch->ctx))
+             continue;
+          /* note that batch_add_dep could flush and unref dep, so
+           * we need to hold a reference to keep it live for the
+diff --git a/src/gallium/drivers/freedreno/freedreno_batch.h b/src/gallium/drivers/freedreno/freedreno_batch.h
+index 48ff7a7..d2caec5 100644
+--- a/src/gallium/drivers/freedreno/freedreno_batch.h
++++ b/src/gallium/drivers/freedreno/freedreno_batch.h
+@@ -375,6 +375,19 @@ fd_batch_reference(struct fd_batch **ptr, struct fd_batch *batch)
+    *ptr = batch;
+ }
+ 
++/**
++ * Check if batch belongs to same ctx, and is not already flushed.
++ * The screen lock is held when a batch is destroyed, but not
++ * necessarily when the last unref happens.  Checking whether
++ * the batch is flushed avoids resurrecting zombie batches.
++ */
++static inline bool
++check_batch(struct fd_batch *batch, struct fd_context *ctx)
++{
++   fd_screen_assert_locked(ctx->screen);
++   return (batch->ctx == ctx) && !batch->flushed;
++}
++
+ /**
+  * Mark the batch as having something worth flushing (rendering, blit, query,
+  * etc)
+diff --git a/src/gallium/drivers/freedreno/freedreno_batch_cache.c b/src/gallium/drivers/freedreno/freedreno_batch_cache.c
+index 3e578ce..39a78a4 100644
+--- a/src/gallium/drivers/freedreno/freedreno_batch_cache.c
++++ b/src/gallium/drivers/freedreno/freedreno_batch_cache.c
+@@ -134,7 +134,7 @@ find_dependee(struct fd_context *ctx, struct fd_batch *last_batch)
+    struct fd_batch *batch;
+ 
+    foreach_batch (batch, cache, cache->batch_mask) {
+-      if (batch->ctx == ctx && fd_batch_has_dep(batch, last_batch)) {
++      if (check_batch(batch, ctx) && fd_batch_has_dep(batch, last_batch)) {
+          fd_batch_reference_locked(&last_batch, batch);
+          return find_dependee(ctx, last_batch);
+       }
+@@ -156,7 +156,7 @@ fd_bc_last_batch(struct fd_context *ctx)
+    fd_screen_lock(ctx->screen);
+ 
+    foreach_batch (batch, cache, cache->batch_mask) {
+-      if (batch->ctx == ctx) {
++      if (check_batch(batch, ctx)) {
+          if (!last_batch ||
+              /* Note: fd_fence_before() handles rollover for us: */
+              fd_fence_before(last_batch->update_seqno, batch->update_seqno)) {
+@@ -200,7 +200,7 @@ fd_bc_add_flush_deps(struct fd_context *ctx, struct fd_batch *last_batch)
+    fd_screen_lock(ctx->screen);
+ 
+    foreach_batch (batch, cache, cache->batch_mask) {
+-      if (batch->ctx == ctx) {
++      if (check_batch(batch, ctx)) {
+          fd_batch_reference_locked(&batches[n++], batch);
+       }
+    }
+@@ -233,11 +233,12 @@ fd_bc_flush_writer(struct fd_context *ctx, struct fd_resource *rsc) assert_dt
+    fd_screen_lock(ctx->screen);
+    struct fd_batch *write_batch = NULL;
+    fd_batch_reference_locked(&write_batch, rsc->track->write_batch);
++   if (write_batch && !check_batch(write_batch, ctx))
++      fd_batch_reference_locked(&write_batch, NULL);
+    fd_screen_unlock(ctx->screen);
+ 
+    if (write_batch) {
+-      if (write_batch->ctx == ctx)
+-         fd_batch_flush(write_batch);
++      fd_batch_flush(write_batch);
+       fd_batch_reference(&write_batch, NULL);
+    }
+ }
+@@ -258,12 +259,12 @@ fd_bc_flush_readers(struct fd_context *ctx, struct fd_resource *rsc) assert_dt
+     */
+    fd_screen_lock(ctx->screen);
+    foreach_batch (batch, &ctx->screen->batch_cache, rsc->track->batch_mask)
+-      fd_batch_reference_locked(&batches[batch_count++], batch);
++      if (check_batch(batch, ctx))
++         fd_batch_reference_locked(&batches[batch_count++], batch);
+    fd_screen_unlock(ctx->screen);
+ 
+    for (int i = 0; i < batch_count; i++) {
+-      if (batches[i]->ctx == ctx)
+-         fd_batch_flush(batches[i]);
++      fd_batch_flush(batches[i]);
+       fd_batch_reference(&batches[i], NULL);
+    }
+ }
+@@ -389,9 +390,13 @@ alloc_batch_locked(struct fd_batch_cache *cache, struct fd_context *ctx,
+       struct fd_batch *flush_batch = NULL;
+       for (unsigned i = 0; i < ARRAY_SIZE(cache->batches); i++) {
+          if (!flush_batch || (cache->batches[i]->seqno < flush_batch->seqno))
+-            fd_batch_reference_locked(&flush_batch, cache->batches[i]);
++            if (check_batch(cache->batches[i], ctx))
++               fd_batch_reference_locked(&flush_batch, cache->batches[i]);
+       }
+ 
++      if (!flush_batch)
++         return NULL;
++
+       /* we can drop lock temporarily here, since we hold a ref,
+        * flush_batch won't disappear under us.
+        */
+@@ -469,7 +474,7 @@ struct fd_batch *
+ fd_bc_alloc_batch(struct fd_context *ctx, bool nondraw)
+ {
+    struct fd_batch_cache *cache = &ctx->screen->batch_cache;
+-   struct fd_batch *batch;
++   struct fd_batch *batch = NULL;
+ 
+    /* For normal draw batches, pctx->set_framebuffer_state() handles
+     * this, but for nondraw batches, this is a nice central location
+@@ -478,9 +483,11 @@ fd_bc_alloc_batch(struct fd_context *ctx, bool nondraw)
+    if (nondraw)
+       fd_context_switch_from(ctx);
+ 
+-   fd_screen_lock(ctx->screen);
+-   batch = alloc_batch_locked(cache, ctx, nondraw);
+-   fd_screen_unlock(ctx->screen);
++   while (!batch) {
++      fd_screen_lock(ctx->screen);
++      batch = alloc_batch_locked(cache, ctx, nondraw);
++      fd_screen_unlock(ctx->screen);
++   }
+ 
+    alloc_query_buf(ctx, batch);
+ 
+@@ -575,9 +582,12 @@ fd_batch_from_fb(struct fd_context *ctx,
+ 
+    key->num_surfs = idx;
+ 
+-   fd_screen_lock(ctx->screen);
+-   struct fd_batch *batch = batch_from_key(ctx, key);
+-   fd_screen_unlock(ctx->screen);
++   struct fd_batch *batch = NULL;
++   while (!batch) {
++      fd_screen_lock(ctx->screen);
++      batch = batch_from_key(ctx, key);
++      fd_screen_unlock(ctx->screen);
++   }
+ 
+    alloc_query_buf(ctx, batch);
+ 
+-- 
+2.56.0
+
