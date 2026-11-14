@@ -1,0 +1,77 @@
+From a58be2924f8bf6dccf645dcd1743c55aeeaa4e8c Mon Sep 17 00:00:00 2001
+From: "m.szczepaniak.000" <m.szczepaniak.000@gmail.com>
+Date: Sat, 14 Nov 2026 02:14:03 +0000
+Subject: [PATCH] freedreno: Only flush a fence's batch from its own context
+
+fence_flush() flushed fence->batch from whatever thread waited on the
+fence, including other contexts and the EGL client wait path, which
+passes pctx == NULL because the frontend already flushed when the
+fence was created. Gecko waits on fences from other threads, so the
+batch got flushed concurrently with its owner: NULL fence->fence in
+fd_pipe_wait_timeout(), NULL batch->submit in fd_submit_flush(), NULL
+gmem_state in fd3_emit_tile_init(), and rendering glitches.
+
+Mark a fence not ready while it is attached to an unsubmitted batch
+(the existing signal in fd_pipe_fence_set_batch(fence, NULL) clears it
+once the submit fence is attached or the batch goes away). In
+fence_flush(), only flush the batch when pctx is the fence's own
+context, after syncing its threaded context, as u_threaded_context.h
+requires for fence_finish(). Other callers just wait for the owner.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../drivers/freedreno/freedreno_fence.c       | 28 +++++++++++++------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/freedreno/freedreno_fence.c b/src/gallium/drivers/freedreno/freedreno_fence.c
+index 4bd1924..67c5687 100644
+--- a/src/gallium/drivers/freedreno/freedreno_fence.c
++++ b/src/gallium/drivers/freedreno/freedreno_fence.c
+@@ -47,17 +47,24 @@ fence_flush(struct pipe_context *pctx, struct pipe_fence_handle *fence,
+ 
+       if (fence->tc_token) {
+          threaded_context_flush(pctx, fence->tc_token, timeout == 0);
+-      }
++      } else if (pctx && (pctx == &fence->ctx->base || (fence->ctx->tc && pctx == &fence->ctx->tc->base))) {
++         threaded_context_unwrap_sync(pctx);
+ 
+-      if (!timeout)
+-         return false;
++         if (fence->batch)
++            fd_batch_flush(fence->batch);
++      }
+ 
+-      if (timeout == OS_TIMEOUT_INFINITE) {
+-         util_queue_fence_wait(&fence->ready);
+-      } else {
+-         int64_t abs_timeout = os_time_get_absolute_timeout(timeout);
+-         if (!util_queue_fence_wait_timeout(&fence->ready, abs_timeout)) {
++      if (!util_queue_fence_is_signalled(&fence->ready)) {
++         if (!timeout)
+             return false;
++
++         if (timeout == OS_TIMEOUT_INFINITE) {
++            util_queue_fence_wait(&fence->ready);
++         } else {
++            int64_t abs_timeout = os_time_get_absolute_timeout(timeout);
++            if (!util_queue_fence_wait_timeout(&fence->ready, abs_timeout)) {
++               return false;
++            }
+          }
+       }
+ 
+@@ -343,6 +350,11 @@ fd_pipe_fence_set_batch(struct pipe_fence_handle *fence, struct fd_batch *batch)
+       assert(!fence->batch);
+       fd_batch_reference(&fence->batch, batch);
+       fd_batch_needs_flush(batch);
++
++      if (!fence->needs_signal) {
++         util_queue_fence_reset(&fence->ready);
++         fence->needs_signal = true;
++      }
+    } else {
+       fd_batch_reference(&fence->batch, NULL);
+ 
+-- 
+2.56.0
+
